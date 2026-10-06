@@ -51,6 +51,19 @@ FHIR APIs.
 The included Python service is a safe development placeholder. Replace its URL
 with the real EAI Python patient service only after contract tests pass.
 
+## Verify the Medplum connection
+
+After completing the ignored local `.env`, verify OAuth client credentials and
+read-only FHIR Patient access without printing the secret or access token:
+
+```bash
+node scripts/verify-medplum-connection.mjs
+```
+
+The staging connection was first verified against the self-hosted Medplum API
+on 2026-10-06. Test records remain in Medplum PostgreSQL; this repository stores
+neither FHIR data nor credentials.
+
 ## Safety rules
 
 - Synthetic data only until production controls and compliance review finish.
@@ -61,4 +74,3 @@ with the real EAI Python patient service only after contract tests pass.
 
 See [ARCHITECTURE.md](ARCHITECTURE.md) and
 [docs/capability-matrix.md](docs/capability-matrix.md).
-
