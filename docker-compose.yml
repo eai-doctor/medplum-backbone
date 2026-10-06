@@ -10,6 +10,7 @@ services:
       MEDPLUM_CLIENT_ID: ${MEDPLUM_CLIENT_ID:?set MEDPLUM_CLIENT_ID}
       MEDPLUM_CLIENT_SECRET: ${MEDPLUM_CLIENT_SECRET:?set MEDPLUM_CLIENT_SECRET}
       EAI_PYTHON_BASE_URL: http://python-sidecar:5101/
+      EAI_TRIAGE_PATH: triage/perform
       REQUEST_TIMEOUT_MS: ${REQUEST_TIMEOUT_MS:-10000}
     ports:
       - "127.0.0.1:5200:5200"
@@ -34,4 +35,3 @@ services:
       interval: 15s
       timeout: 5s
       retries: 5
-

@@ -11,7 +11,7 @@ def health():
     return jsonify(ok=True, service="eai-python-sidecar-placeholder")
 
 
-@app.post("/v1/triage")
+@app.post("/triage/perform")
 def triage():
     # This intentionally does not make a clinical decision. Replace this route
     # with the existing, tested EAI implementation after contract verification.
@@ -27,4 +27,3 @@ def triage():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.getenv("PORT", "5101")))
-

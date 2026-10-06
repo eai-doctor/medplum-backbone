@@ -37,8 +37,9 @@ paths:
       responses:
         '200':
           description: Triage response from EAI Python sidecar
+        '401':
+          description: Legacy EAI authentication is missing or invalid
         '501':
           description: Development placeholder is not connected
         '502':
           description: Python upstream failure
-

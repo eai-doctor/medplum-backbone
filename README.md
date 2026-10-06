@@ -25,6 +25,8 @@ FHIR APIs.
 - Explicit capability ownership registry.
 - Medplum-first Patient read route.
 - Python-sidecar triage route for an EAI-only capability.
+- Legacy-compatible `POST /triage/perform` adapter with caller Bearer-token
+  forwarding; no Medplum credential is sent to Python.
 - Cached OAuth client-credentials token acquisition.
 - Request IDs, timeouts, normalized upstream errors, and health endpoints.
 - Docker Compose development topology.

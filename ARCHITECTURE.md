@@ -31,10 +31,16 @@ GET /v1/patients/{id}
 ```text
 POST /v1/triage
   -> orchestrator
-  -> Python POST /v1/triage
+  -> Python POST /triage/perform
   -> optional validated FHIR write in a later phase
   -> caller
 ```
+
+During the compatibility phase, the orchestrator forwards the caller's legacy
+EAI `Authorization: Bearer ...` header to the configured Python service. It
+does not exchange a Medplum token for a legacy token and never forwards the
+Medplum ClientApplication secret. A Medplum-authenticated frontend therefore
+needs an explicit identity bridge before legacy triage can replace legacy auth.
 
 ## Failure behavior
 
@@ -52,4 +58,3 @@ POST /v1/triage
 5. Introduce FHIR identifiers linking legacy IDs to Medplum resources.
 6. Migrate one route at a time with feature flags and rollback.
 7. Add subscriptions for asynchronous AI workflows.
-

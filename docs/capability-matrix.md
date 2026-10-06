@@ -9,7 +9,7 @@
 | OAuth / SMART / membership | Medplum | Token handling only | Token client implemented |
 | AccessPolicy / audit / history | Medplum | No duplication | Backbone available |
 | Binary / DocumentReference | Medplum | Upload workflow | Planned |
-| AI triage | Python | Stable HTTP contract | Placeholder implemented |
+| AI triage | Python | `POST /triage/perform`; forward caller auth | Adapter contract implemented; real service URL pending |
 | RAG / PubMed | Python | Stable HTTP contract | Planned |
 | PDF/OCR/transcription | Python | Store result as FHIR | Planned |
 | AI summaries | Python compute; Medplum record | Map output to FHIR | Planned |
@@ -17,4 +17,3 @@
 An upstream outage does not change ownership. In particular, the orchestrator
 must not write a second copy of a clinical resource to a legacy store because
 Medplum is temporarily unavailable.
-

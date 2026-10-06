@@ -26,7 +26,7 @@ export function buildServer(config: Config) {
 
   app.post('/v1/triage', async (request, reply) => {
     try {
-      const result = await python.triage(request.body, request.id);
+      const result = await python.triage(request.body, request.id, request.headers.authorization);
       return reply.status(result.status).send(result.body);
     } catch (error) {
       return handleUpstream(error, reply);

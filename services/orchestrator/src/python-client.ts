@@ -4,13 +4,24 @@ import { fetchWithTimeout, UpstreamError } from './http.js';
 export class PythonClient {
   constructor(private readonly config: Config) {}
 
-  async triage(payload: unknown, requestId: string): Promise<{ status: number; body: unknown }> {
-    const url = new URL('v1/triage', this.config.EAI_PYTHON_BASE_URL);
+  async triage(
+    payload: unknown,
+    requestId: string,
+    authorization?: string,
+  ): Promise<{ status: number; body: unknown }> {
+    const url = new URL(this.config.EAI_TRIAGE_PATH, this.config.EAI_PYTHON_BASE_URL);
+    const headers: Record<string, string> = {
+      'content-type': 'application/json',
+      'x-request-id': requestId,
+    };
+    if (authorization) {
+      headers.authorization = authorization;
+    }
     const response = await fetchWithTimeout(
       url.toString(),
       {
         method: 'POST',
-        headers: { 'content-type': 'application/json', 'x-request-id': requestId },
+        headers,
         body: JSON.stringify(payload),
       },
       this.config.REQUEST_TIMEOUT_MS,
@@ -22,4 +33,3 @@ export class PythonClient {
     return { status: response.status, body };
   }
 }
-

@@ -6,6 +6,7 @@ const schema = z.object({
   MEDPLUM_CLIENT_ID: z.string().min(1),
   MEDPLUM_CLIENT_SECRET: z.string().min(1),
   EAI_PYTHON_BASE_URL: z.string().url(),
+  EAI_TRIAGE_PATH: z.string().min(1).default('triage/perform'),
   REQUEST_TIMEOUT_MS: z.coerce.number().int().positive().default(10_000),
 });
 
@@ -23,4 +24,3 @@ export function loadConfig(environment: NodeJS.ProcessEnv = process.env): Config
 function ensureTrailingSlash(value: string): string {
   return value.endsWith('/') ? value : `${value}/`;
 }
-
