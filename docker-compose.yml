@@ -1,0 +1,37 @@
+name: medplum-backbone
+
+services:
+  orchestrator:
+    build: ./services/orchestrator
+    restart: unless-stopped
+    environment:
+      PORT: 5200
+      MEDPLUM_BASE_URL: ${MEDPLUM_BASE_URL:?set MEDPLUM_BASE_URL}
+      MEDPLUM_CLIENT_ID: ${MEDPLUM_CLIENT_ID:?set MEDPLUM_CLIENT_ID}
+      MEDPLUM_CLIENT_SECRET: ${MEDPLUM_CLIENT_SECRET:?set MEDPLUM_CLIENT_SECRET}
+      EAI_PYTHON_BASE_URL: http://python-sidecar:5101/
+      REQUEST_TIMEOUT_MS: ${REQUEST_TIMEOUT_MS:-10000}
+    ports:
+      - "127.0.0.1:5200:5200"
+    depends_on:
+      python-sidecar:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:5200/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  python-sidecar:
+    build: ./services/python-sidecar
+    restart: unless-stopped
+    environment:
+      PORT: 5101
+    expose:
+      - "5101"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5101/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+

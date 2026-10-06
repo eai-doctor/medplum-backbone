@@ -1,0 +1,44 @@
+openapi: 3.1.0
+info:
+  title: EAI Medplum Backbone Facade
+  version: 0.1.0
+paths:
+  /health:
+    get:
+      responses:
+        '200':
+          description: Orchestrator health
+  /v1/capabilities:
+    get:
+      responses:
+        '200':
+          description: Capability ownership registry
+  /v1/patients/{id}:
+    get:
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: FHIR Patient from Medplum
+        '404':
+          description: Patient not found
+        '502':
+          description: Medplum upstream failure
+  /v1/triage:
+    post:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, additionalProperties: true }
+      responses:
+        '200':
+          description: Triage response from EAI Python sidecar
+        '501':
+          description: Development placeholder is not connected
+        '502':
+          description: Python upstream failure
+
