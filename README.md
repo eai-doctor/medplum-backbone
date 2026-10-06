@@ -75,4 +75,6 @@ neither FHIR data nor credentials.
 - Route ownership changes require tests and a capability-matrix update.
 
 See [ARCHITECTURE.md](ARCHITECTURE.md) and
-[docs/capability-matrix.md](docs/capability-matrix.md).
+[docs/capability-matrix.md](docs/capability-matrix.md). Security findings and
+deployment prerequisites are tracked in
+[docs/security-notes.md](docs/security-notes.md).
