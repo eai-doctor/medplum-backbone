@@ -1,0 +1,52 @@
+name: eai-medplum-backbone
+
+services:
+  orchestrator:
+    build:
+      context: ../../services/orchestrator
+    restart: unless-stopped
+    env_file:
+      - ${BACKBONE_ENV_FILE:-../../.env}
+    environment:
+      PORT: 5200
+      EAI_PYTHON_BASE_URL: http://python-patient:8080/
+      EAI_TRIAGE_PATH: triage/perform
+    ports:
+      - "127.0.0.1:5200:5200"
+    depends_on:
+      python-patient:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:5200/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    security_opt:
+      - no-new-privileges:true
+
+  python-patient:
+    build:
+      context: ${EAI_PATIENT_CONTEXT:?set EAI_PATIENT_CONTEXT to the private main-service checkout}
+      dockerfile: Dockerfile.patient
+    restart: unless-stopped
+    env_file:
+      - ${EAI_PATIENT_ENV_FILE:-./patient.env}
+    environment:
+      FLASK_HOST: 0.0.0.0
+      PORT: 8080
+      FHIR_PROVIDER: medplum
+      MEDPLUM_PROFILE: patient
+    expose:
+      - "8080"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - patient_uploads:/app/uploads
+    security_opt:
+      - no-new-privileges:true
+
+volumes:
+  patient_uploads:
