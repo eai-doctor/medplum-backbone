@@ -45,8 +45,8 @@ function handleUpstream(error: unknown, reply: { status: (code: number) => { sen
     return reply.status(error.status).send({ error: error.status === 401 ? 'UNAUTHORIZED' : 'FORBIDDEN' });
   }
   if (error instanceof UpstreamError) {
-    const status = error.upstream === 'medplum' && (error.status === 401 || error.status === 403)
-      ? error.status
+    const status = error.upstream === 'medplum' && error.status >= 400 && error.status <= 403
+      ? error.status === 403 ? 403 : 401
       : error.status === 404 ? 404 : 502;
     return reply.status(status).send({
       error: `${error.upstream.toUpperCase()}_UPSTREAM_ERROR`,
