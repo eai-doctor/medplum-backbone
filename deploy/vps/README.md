@@ -17,6 +17,13 @@ repository and it does not expose Python to the public network.
 Both secret files must be owned by the deployment user and mode `600`. Never
 reuse the weak JWT secret from the local experiment.
 
+After securely placing `backbone.env`, generate new Python and deployment
+secrets directly on the VPS (the values are never printed):
+
+```bash
+sh deploy/vps/bootstrap-secrets.sh
+```
+
 ## Validate before starting
 
 Create `/opt/eai/medplum-backbone/deploy/vps/deploy.env` from
