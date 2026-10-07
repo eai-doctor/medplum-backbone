@@ -11,6 +11,7 @@ services:
       PORT: 5200
       EAI_PYTHON_BASE_URL: http://python-patient:8080/
       EAI_TRIAGE_PATH: triage/perform
+      REQUEST_TIMEOUT_MS: 30000
     ports:
       - "127.0.0.1:5200:5200"
     depends_on:

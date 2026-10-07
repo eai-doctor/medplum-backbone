@@ -26,6 +26,8 @@ if [ ! -f "$PATIENT_ENV" ]; then
     printf '%s\n' 'MEDPLUM_PATIENT_CLIENT_SECRET='
     printf '%s\n' 'USE_EMAIL_MICROSERVICE=false'
     printf '%s\n' 'EMAIL_ENABLED=false'
+    printf '%s\n' 'EMAIL_SERVICE_URL=http://email-service.invalid'
+    printf '%s\n' 'EMAIL_SERVICE_API_KEY=disabled-staging-placeholder'
     printf '%s\n' 'PUBMED_SERVICE_ENABLED=false'
     printf '%s\n' 'USE_MIXEHR_SERVICE=false'
     printf '%s\n' 'USE_TRANSCRIPTION_MICROSERVICE=false'
