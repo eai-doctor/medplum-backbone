@@ -2,6 +2,7 @@ import Fastify from 'fastify';
 import type { Config } from './config.js';
 import { capabilityOwners } from './capabilities.js';
 import { UpstreamError } from './http.js';
+import { AuthenticationError, createInternalToken, readBearerToken } from './identity-bridge.js';
 import { MedplumClient } from './medplum-client.js';
 import { PythonClient } from './python-client.js';
 
@@ -26,7 +27,10 @@ export function buildServer(config: Config) {
 
   app.post('/v1/triage', async (request, reply) => {
     try {
-      const result = await python.triage(request.body, request.id, request.headers.authorization);
+      const callerToken = readBearerToken(request.headers.authorization);
+      const userInfo = await medplum.validateUserToken(callerToken);
+      const internalToken = createInternalToken(userInfo, config);
+      const result = await python.triage(request.body, request.id, internalToken);
       return reply.status(result.status).send(result.body);
     } catch (error) {
       return handleUpstream(error, reply);
@@ -37,8 +41,13 @@ export function buildServer(config: Config) {
 }
 
 function handleUpstream(error: unknown, reply: { status: (code: number) => { send: (body: unknown) => unknown } }) {
+  if (error instanceof AuthenticationError) {
+    return reply.status(error.status).send({ error: error.status === 401 ? 'UNAUTHORIZED' : 'FORBIDDEN' });
+  }
   if (error instanceof UpstreamError) {
-    const status = error.status === 404 ? 404 : 502;
+    const status = error.upstream === 'medplum' && (error.status === 401 || error.status === 403)
+      ? error.status
+      : error.status === 404 ? 404 : 502;
     return reply.status(status).send({
       error: `${error.upstream.toUpperCase()}_UPSTREAM_ERROR`,
       upstreamStatus: error.status,

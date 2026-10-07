@@ -2,6 +2,16 @@ openapi: 3.1.0
 info:
   title: EAI Medplum Backbone Facade
   version: 0.1.0
+components:
+  securitySchemes:
+    medplumOAuth:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://api.eai-medplum-staging.tech/oauth2/authorize
+          tokenUrl: https://api.eai-medplum-staging.tech/oauth2/token
+          scopes:
+            openid: Identify the Medplum member
 paths:
   /health:
     get:
@@ -29,6 +39,8 @@ paths:
           description: Medplum upstream failure
   /v1/triage:
     post:
+      security:
+        - medplumOAuth: [openid]
       requestBody:
         required: true
         content:
@@ -38,7 +50,9 @@ paths:
         '200':
           description: Triage response from EAI Python sidecar
         '401':
-          description: Legacy EAI authentication is missing or invalid
+          description: Medplum authentication is missing or invalid
+        '403':
+          description: Authenticated profile is not a supported Patient or Practitioner
         '501':
           description: Development placeholder is not connected
         '502':

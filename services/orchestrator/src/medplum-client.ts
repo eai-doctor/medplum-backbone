@@ -2,6 +2,13 @@ import type { Config } from './config.js';
 import { fetchWithTimeout, UpstreamError } from './http.js';
 
 type TokenResponse = { access_token: string; expires_in?: number };
+export type MedplumUserInfo = {
+  sub?: unknown;
+  email?: unknown;
+  fhirUser?: unknown;
+  fhir_user?: unknown;
+  profile?: unknown;
+};
 
 export class MedplumClient {
   private token?: { value: string; expiresAt: number };
@@ -21,6 +28,19 @@ export class MedplumClient {
       throw new UpstreamError('medplum', response.status, await safeMessage(response));
     }
     return response.json();
+  }
+
+  async validateUserToken(token: string): Promise<MedplumUserInfo> {
+    const url = new URL('oauth2/userinfo', this.config.MEDPLUM_BASE_URL);
+    const response = await fetchWithTimeout(
+      url.toString(),
+      { headers: { authorization: `Bearer ${token}`, accept: 'application/json' } },
+      this.config.REQUEST_TIMEOUT_MS,
+    );
+    if (!response.ok) {
+      throw new UpstreamError('medplum', response.status, await safeMessage(response));
+    }
+    return response.json() as Promise<MedplumUserInfo>;
   }
 
   private async getToken(): Promise<string> {
@@ -52,4 +72,3 @@ async function safeMessage(response: Response): Promise<string> {
   const text = await response.text();
   return text.slice(0, 500) || `HTTP ${response.status}`;
 }
-

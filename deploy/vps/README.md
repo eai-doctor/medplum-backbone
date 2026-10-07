@@ -12,9 +12,10 @@ repository and it does not expose Python to the public network.
 /opt/eai/secrets/
   backbone.env             # Medplum ClientApplication credentials
   patient.env              # rotated Python secrets
+  identity.env             # shared, short-lived sidecar JWT signing secret
 ```
 
-Both secret files must be owned by the deployment user and mode `600`. Never
+All secret files must be owned by the deployment user and mode `600`. Never
 reuse the weak JWT secret from the local experiment.
 
 After securely placing `backbone.env`, generate new Python and deployment

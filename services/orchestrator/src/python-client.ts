@@ -7,16 +7,14 @@ export class PythonClient {
   async triage(
     payload: unknown,
     requestId: string,
-    authorization?: string,
+    internalToken: string,
   ): Promise<{ status: number; body: unknown }> {
     const url = new URL(this.config.EAI_TRIAGE_PATH, this.config.EAI_PYTHON_BASE_URL);
     const headers: Record<string, string> = {
       'content-type': 'application/json',
       'x-request-id': requestId,
     };
-    if (authorization) {
-      headers.authorization = authorization;
-    }
+    headers.authorization = `Bearer ${internalToken}`;
     const response = await fetchWithTimeout(
       url.toString(),
       {

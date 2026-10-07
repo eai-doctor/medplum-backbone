@@ -7,6 +7,8 @@ const schema = z.object({
   MEDPLUM_CLIENT_SECRET: z.string().min(1),
   EAI_PYTHON_BASE_URL: z.string().url(),
   EAI_TRIAGE_PATH: z.string().min(1).default('triage/perform'),
+  EAI_INTERNAL_JWT_SECRET: z.string().min(32),
+  EAI_INTERNAL_JWT_TTL_SECONDS: z.coerce.number().int().min(30).max(300).default(60),
   REQUEST_TIMEOUT_MS: z.coerce.number().int().positive().default(10_000),
 });
 

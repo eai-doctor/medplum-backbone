@@ -31,16 +31,17 @@ GET /v1/patients/{id}
 ```text
 POST /v1/triage
   -> orchestrator
+  -> Medplum /oauth2/userinfo validates caller
+  -> orchestrator mints 60-second internal sidecar JWT
   -> Python POST /triage/perform
   -> optional validated FHIR write in a later phase
   -> caller
 ```
 
-During the compatibility phase, the orchestrator forwards the caller's legacy
-EAI `Authorization: Bearer ...` header to the configured Python service. It
-does not exchange a Medplum token for a legacy token and never forwards the
-Medplum ClientApplication secret. A Medplum-authenticated frontend therefore
-needs an explicit identity bridge before legacy triage can replace legacy auth.
+The orchestrator never forwards the caller's Medplum token or the Medplum
+ClientApplication secret to Python. It validates the caller through Medplum,
+maps the FHIR profile to the narrow legacy role vocabulary, and mints a
+short-lived internal token. Unsupported or ambiguous profiles fail closed.
 
 ## Failure behavior
 

@@ -9,13 +9,15 @@ const config: Config = {
   MEDPLUM_CLIENT_SECRET: 'client-secret',
   EAI_PYTHON_BASE_URL: 'http://python-sidecar:5101/',
   EAI_TRIAGE_PATH: 'triage/perform',
+  EAI_INTERNAL_JWT_SECRET: 'test-secret-that-is-at-least-32-bytes-long',
+  EAI_INTERNAL_JWT_TTL_SECONDS: 60,
   REQUEST_TIMEOUT_MS: 1_000,
 };
 
 afterEach(() => vi.unstubAllGlobals());
 
 describe('PythonClient', () => {
-  it('uses the configured legacy triage path and forwards bearer authentication', async () => {
+  it('uses the configured legacy triage path and sends only the internal bearer token', async () => {
     const fetchMock = vi.fn().mockResolvedValue(
       new Response(JSON.stringify({ success: true }), {
         status: 200,
@@ -25,28 +27,28 @@ describe('PythonClient', () => {
     vi.stubGlobal('fetch', fetchMock);
 
     const client = new PythonClient(config);
-    await client.triage({ symptoms: ['mild_pain'] }, 'request-123', 'Bearer legacy-jwt');
+    await client.triage({ symptoms: ['mild_pain'] }, 'request-123', 'internal-jwt');
 
     expect(fetchMock).toHaveBeenCalledOnce();
     const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
     expect(url).toBe('http://python-sidecar:5101/triage/perform');
     expect(init.headers).toMatchObject({
-      authorization: 'Bearer legacy-jwt',
+      authorization: 'Bearer internal-jwt',
       'x-request-id': 'request-123',
     });
   });
 
-  it('does not invent an authorization header when the caller has none', async () => {
+  it('returns Python authentication errors without changing them', async () => {
     const fetchMock = vi.fn().mockResolvedValue(
       new Response(JSON.stringify({ error: 'Authentication required' }), { status: 401 }),
     );
     vi.stubGlobal('fetch', fetchMock);
 
     const client = new PythonClient(config);
-    const result = await client.triage({}, 'request-456');
+    const result = await client.triage({}, 'request-456', 'internal-jwt');
 
     const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
-    expect(init.headers).not.toHaveProperty('authorization');
+    expect(init.headers).toMatchObject({ authorization: 'Bearer internal-jwt' });
     expect(result.status).toBe(401);
   });
 });
