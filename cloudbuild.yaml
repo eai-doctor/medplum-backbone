@@ -1,0 +1,27 @@
+steps:
+  - id: build-orchestrator
+    name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - --tag
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/orchestrator:$COMMIT_SHA
+      - services/orchestrator
+
+  - id: build-python-sidecar
+    name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - --tag
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/python-sidecar:$COMMIT_SHA
+      - services/python-sidecar
+
+images:
+  - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/orchestrator:$COMMIT_SHA
+  - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/python-sidecar:$COMMIT_SHA
+
+substitutions:
+  _REGION: europe-west1
+  _REPOSITORY: medplum-backbone
+
+options:
+  logging: CLOUD_LOGGING_ONLY

@@ -24,3 +24,11 @@ this repository. Deployment requirements are:
 Synthetic end-to-end contract tests persist no clinical record. Before a
 public route is enabled, complete browser authorization-code testing, rate
 limits, audit logging, and authorization tests for patient/clinician access.
+
+## FHIR facade authorization
+
+FHIR facade routes must forward the caller's Medplum access token to Medplum.
+They must not use the backbone ClientApplication credential to satisfy an
+end-user clinical read, because doing so would replace the user's AccessPolicy
+with the service account's privileges. `GET /v1/patients/:id` enforces this
+boundary and rejects requests without a bearer token.

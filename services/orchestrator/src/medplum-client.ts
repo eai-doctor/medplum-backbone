@@ -15,12 +15,11 @@ export class MedplumClient {
 
   constructor(private readonly config: Config) {}
 
-  async readResource(resourceType: string, id: string): Promise<unknown> {
-    const token = await this.getToken();
+  async readResource(resourceType: string, id: string, callerToken: string): Promise<unknown> {
     const url = new URL(`fhir/R4/${encodeURIComponent(resourceType)}/${encodeURIComponent(id)}`, this.config.MEDPLUM_BASE_URL);
     const response = await fetchWithTimeout(
       url.toString(),
-      { headers: { authorization: `Bearer ${token}`, accept: 'application/fhir+json' } },
+      { headers: { authorization: `Bearer ${callerToken}`, accept: 'application/fhir+json' } },
       this.config.REQUEST_TIMEOUT_MS,
     );
 

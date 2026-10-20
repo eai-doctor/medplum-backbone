@@ -19,7 +19,8 @@ export function buildServer(config: Config) {
 
   app.get<{ Params: { id: string } }>('/v1/patients/:id', async (request, reply) => {
     try {
-      return await medplum.readResource('Patient', request.params.id);
+      const callerToken = readBearerToken(request.headers.authorization);
+      return await medplum.readResource('Patient', request.params.id, callerToken);
     } catch (error) {
       return handleUpstream(error, reply);
     }

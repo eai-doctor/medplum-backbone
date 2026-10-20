@@ -79,3 +79,8 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) and
 [docs/capability-matrix.md](docs/capability-matrix.md). Security findings and
 deployment prerequisites are tracked in
 [docs/security-notes.md](docs/security-notes.md).
+
+For a staged Google Cloud Run multi-container deployment, see
+[deploy/gcp/README.md](deploy/gcp/README.md). The included Python container is
+still a `501 NOT_CONNECTED` placeholder; the Cloud Run deployment proves the
+backbone topology and authentication boundary, not complete AI functionality.
