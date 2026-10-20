@@ -77,10 +77,12 @@ From the repository root:
 gcloud builds submit \
   --region=europe-west1 \
   --config=cloudbuild.yaml \
-  --substitutions=_REGION=europe-west1,_REPOSITORY=medplum-backbone
+  --substitutions=COMMIT_SHA="$(git rev-parse HEAD)",_REGION=europe-west1,_REPOSITORY=medplum-backbone
 ```
 
 Cloud Build tags both images with the Git commit SHA. Do not deploy `latest`.
+`COMMIT_SHA` is supplied explicitly above because a manual source upload does
+not have the Git-trigger substitutions that Developer Connect provides.
 
 For continuous deployment, select **Cloud Build configuration file** in the
 Google Cloud repository connection and enter `/cloudbuild.yaml`. Limit the
