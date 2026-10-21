@@ -22,7 +22,8 @@ orchestrator connects to Medplum through its HTTPS FHIR/OAuth API.
 
 ## 1. Choose project and region
 
-The screenshot used project `eai-doctor` and `europe-west1`. Confirm that this
+The deployment uses project `eai-doctor` and the Montréal region
+`northamerica-northeast1` to support the Canadian data-residency requirement. Confirm that this
 region satisfies the team's healthcare data-residency decision before creating
 resources. Artifact Registry, Cloud Build and Cloud Run should use the same
 region.
@@ -43,7 +44,7 @@ gcloud services enable \
 ```bash
 gcloud artifacts repositories create medplum-backbone \
   --repository-format=docker \
-  --location=europe-west1 \
+  --location=northamerica-northeast1 \
   --description='EAI Medplum backbone images'
 ```
 
@@ -75,9 +76,9 @@ From the repository root:
 
 ```bash
 gcloud builds submit \
-  --region=europe-west1 \
+  --region=northamerica-northeast1 \
   --config=cloudbuild.yaml \
-  --substitutions=COMMIT_SHA="$(git rev-parse HEAD)",_REGION=europe-west1,_REPOSITORY=medplum-backbone
+  --substitutions=COMMIT_SHA="$(git rev-parse HEAD)",_REGION=northamerica-northeast1,_REPOSITORY=medplum-backbone
 ```
 
 Cloud Build tags both images with the Git commit SHA. Do not deploy `latest`.
@@ -94,7 +95,7 @@ After the build succeeds, set non-secret deployment inputs and run:
 
 ```bash
 export PROJECT_ID=eai-doctor
-export REGION=europe-west1
+export REGION=northamerica-northeast1
 export IMAGE_TAG='<full Git commit SHA built by Cloud Build>'
 export MEDPLUM_BASE_URL='https://api.eai-medplum-staging.tech/'
 export RUNTIME_SERVICE_ACCOUNT='medplum-backbone-runner@eai-doctor.iam.gserviceaccount.com'
