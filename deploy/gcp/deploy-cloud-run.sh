@@ -49,13 +49,12 @@ gcloud run deploy "$SERVICE_NAME" \
   --port 8080 \
   --cpu 1 \
   --memory 512Mi \
-  --set-env-vars "PORT=8080,MEDPLUM_BASE_URL=${MEDPLUM_BASE_URL},EAI_PYTHON_BASE_URL=http://127.0.0.1:5101/,EAI_TRIAGE_PATH=triage/perform,EAI_INTERNAL_JWT_TTL_SECONDS=60,REQUEST_TIMEOUT_MS=10000" \
+  --set-env-vars "MEDPLUM_BASE_URL=${MEDPLUM_BASE_URL},EAI_PYTHON_BASE_URL=http://127.0.0.1:5101/,EAI_TRIAGE_PATH=triage/perform,EAI_INTERNAL_JWT_TTL_SECONDS=60,REQUEST_TIMEOUT_MS=10000" \
   --set-secrets "MEDPLUM_CLIENT_ID=${MEDPLUM_CLIENT_ID_SECRET}:1,MEDPLUM_CLIENT_SECRET=${MEDPLUM_CLIENT_SECRET_SECRET}:1,EAI_INTERNAL_JWT_SECRET=${INTERNAL_JWT_SECRET}:1" \
   --container python-sidecar \
   --image "$sidecar_image" \
   --cpu 1 \
   --memory 512Mi \
-  --set-env-vars "PORT=5101" \
   --set-secrets "EAI_INTERNAL_JWT_SECRET=${INTERNAL_JWT_SECRET}:1"
 
 printf '%s\n' 'Deployment submitted. Verify the new revision before adding frontend traffic.'
