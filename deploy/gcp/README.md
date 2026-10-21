@@ -102,6 +102,11 @@ export RUNTIME_SERVICE_ACCOUNT='medplum-backbone-runner@eai-doctor.iam.gservicea
 ./deploy/gcp/deploy-cloud-run.sh
 ```
 
+The deployment is private by default. The script passes
+`--no-allow-unauthenticated` unless `ALLOW_UNAUTHENTICATED=true` is set
+explicitly. Do not enable unauthenticated ingress until CORS, rate limiting,
+monitoring and the staging security review are complete.
+
 The script verifies both images and all three secret resources before it calls
 Cloud Run. It does not create or print secret values.
 

@@ -11,9 +11,16 @@ set -eu
 
 SERVICE_NAME=${SERVICE_NAME:-medplum-backbone-staging}
 ARTIFACT_REPOSITORY=${ARTIFACT_REPOSITORY:-medplum-backbone}
+ALLOW_UNAUTHENTICATED=${ALLOW_UNAUTHENTICATED:-false}
 MEDPLUM_CLIENT_ID_SECRET=${MEDPLUM_CLIENT_ID_SECRET:-medplum-client-id}
 MEDPLUM_CLIENT_SECRET_SECRET=${MEDPLUM_CLIENT_SECRET_SECRET:-medplum-client-secret}
 INTERNAL_JWT_SECRET=${INTERNAL_JWT_SECRET:-eai-internal-jwt-secret}
+
+case "$ALLOW_UNAUTHENTICATED" in
+  true) access_flag=--allow-unauthenticated ;;
+  false) access_flag=--no-allow-unauthenticated ;;
+  *) printf '%s\n' 'ALLOW_UNAUTHENTICATED must be true or false' >&2; exit 2 ;;
+esac
 
 orchestrator_image="${REGION}-docker.pkg.dev/${PROJECT_ID}/${ARTIFACT_REPOSITORY}/orchestrator:${IMAGE_TAG}"
 sidecar_image="${REGION}-docker.pkg.dev/${PROJECT_ID}/${ARTIFACT_REPOSITORY}/python-sidecar:${IMAGE_TAG}"
@@ -32,7 +39,7 @@ gcloud run deploy "$SERVICE_NAME" \
   --platform managed \
   --execution-environment gen2 \
   --service-account "$RUNTIME_SERVICE_ACCOUNT" \
-  --allow-unauthenticated \
+  "$access_flag" \
   --timeout 60 \
   --concurrency 40 \
   --min-instances 0 \
